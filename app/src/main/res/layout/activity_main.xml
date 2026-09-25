@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_warm"
+    android:fitsSystemWindows="true">
+
+    <!-- ===== HEADER ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/screen_title"
+            android:textSize="28sp"
+            android:textColor="@color/text_dark"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif" />
+
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_more_vert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More options"
+            android:scaleType="center" />
+    </LinearLayout>
+
+    <!-- ===== CONNECTION ROW ===== -->
+    <LinearLayout
+        android:id="@+id/connectionCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_connection_card"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/ivConnectionIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_wifi"
+            android:contentDescription="Connection status" />
+
+        <View
+            android:id="@+id/connectionDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="10dp"
+            android:background="@color/status_disconnected" />
+
+        <TextView
+            android:id="@+id/tvConnectionStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/connection_idle"
+            android:textSize="15sp"
+            android:textColor="@color/text_dark" />
+
+        <ImageButton
+            android:id="@+id/btnManageConnection"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_link"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/connection_manage"
+            android:scaleType="center" />
+    </LinearLayout>
+
+    <!-- ===== LANGUAGE PREFERENCES CARD ===== -->
+    <LinearLayout
+        android:id="@+id/languageCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_language_card"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <!-- I speak row -->
+        <LinearLayout
+            android:id="@+id/rowSpeak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_mic_teal"
+                android:contentDescription="Speak language" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pref_i_speak"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_light" />
+
+                <TextView
+                    android:id="@+id/tvSpeakLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lang_english"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_dark"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPackStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Offline Model Ready"
+                    android:textSize="12sp"
+                    android:textColor="@color/teal_primary" />
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Change speak language"
+                android:scaleType="center" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/surface_card_border"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="14dp" />
+
+        <!-- I listen in row (Headset / Playback Voice) -->
+        <LinearLayout
+            android:id="@+id/rowListen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_headphones"
+                android:contentDescription="Listen language" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pref_i_listen"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_light" />
+
+                <TextView
+                    android:id="@+id/tvListenLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lang_english"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_dark"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Change listen language"
+                android:scaleType="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===== CHAT MESSAGES ===== -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        tools:listitem="@layout/item_message_outgoing" />
+
+    <!-- Empty state text -->
+    <TextView
+        android:id="@+id/tvEmptyChat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/chat_no_messages"
+        android:textSize="15sp"
+        android:textColor="@color/text_light"
+        android:visibility="visible"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp" />
+
+    <!-- ===== LIVE PARTIAL TEXT ===== -->
+    <TextView
+        android:id="@+id/tvLivePartial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="2dp"
+        android:textColor="@color/teal_primary"
+        android:textSize="15sp"
+        android:textStyle="italic"
+        android:minHeight="24dp"
+        android:gravity="center_horizontal" />
+
+    <!-- ===== MIC & ACTION CONTROL AREA ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="16dp">
+
+        <!-- Mode & Language status pill row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/tvMicLanguageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lang_english"
+                android:textSize="13sp"
+                android:textColor="@color/teal_primary"
+                android:textStyle="bold"
+                android:background="@drawable/bg_language_pill"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvModeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PTT MODE"
+                android:textSize="12sp"
+                android:textColor="@color/text_dark"
+                android:textStyle="bold"
+                android:background="@drawable/bg_connection_card"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Controls Row: Exactly 2 Buttons (Emergency Alert & Large PTT Mic) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp">
+
+            <!-- Dedicated Emergency Alert Button -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginEnd="40dp">
+
+                <ImageButton
+                    android:id="@+id/btnAlert"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_warning"
+                    android:background="@drawable/bg_alert_button"
+                    android:scaleType="center"
+                    android:contentDescription="Emergency Distress Alert"
+                    android:elevation="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EMERGENCY"
+                    android:textSize="11sp"
+                    android:textColor="#D32F2F"
+                    android:textStyle="bold"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- Large Mic Button (PTT) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnMic"
+                    android:layout_width="82dp"
+                    android:layout_height="82dp"
+                    android:src="@drawable/ic_mic"
+                    android:background="@drawable/bg_mic_button"
+                    android:scaleType="center"
+                    android:contentDescription="@string/mic_tap_to_speak"
+                    android:elevation="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PUSH TO TALK"
+                    android:textSize="11sp"
+                    android:textColor="@color/teal_primary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- Hidden Mode Toggle (Preserves code bindings without polluting 2-button layout) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/btnModeToggle"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvModeToggleAction"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Instruction below mic -->
+        <TextView
+            android:id="@+id/tvMicInstruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hold to talk, release to send"
+            android:textSize="13sp"
+            android:textColor="@color/text_light"
+            android:layout_marginTop="12dp" />
+    </LinearLayout>
+
+</LinearLayout>

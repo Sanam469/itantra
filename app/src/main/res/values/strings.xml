@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">iTantra</string>
+    <string name="screen_title">Conversation</string>
+
+    <!-- Connection -->
+    <string name="connection_idle">Not connected</string>
+    <string name="connection_searching">Searching nearby…</string>
+    <string name="connection_connecting">Connecting…</string>
+    <string name="connection_connected">Connected to %s</string>
+    <string name="connection_disconnected">Connection lost</string>
+    <string name="connection_manage">Manage connection</string>
+
+    <!-- Language preferences -->
+    <string name="pref_i_speak">I speak</string>
+    <string name="pref_i_listen">I listen in</string>
+    <string name="pref_choose_language">Choose language</string>
+
+    <!-- Language names (native script) -->
+    <string name="lang_english">English</string>
+    <string name="lang_hindi">हिन्दी</string>
+    <string name="lang_bengali">বাংলা</string>
+    <string name="lang_tamil">தமிழ்</string>
+    <string name="lang_telugu">తెలుగు</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_gujarati">ગુજરાતી</string>
+    <string name="lang_kannada">ಕನ್ನಡ</string>
+    <string name="lang_malayalam">മലയാളം</string>
+    <string name="lang_punjabi">ਪੰਜਾਬੀ</string>
+
+    <!-- Language availability -->
+    <string name="lang_available">Available</string>
+    <string name="lang_coming_soon">Coming soon</string>
+
+    <!-- Mic button -->
+    <string name="mic_tap_to_speak">Tap to speak</string>
+    <string name="mic_listening">Listening…</string>
+    <string name="mic_processing">Processing…</string>
+    <string name="mic_stop">Tap to stop</string>
+    <string name="mic_loading">Preparing…</string>
+
+    <!-- Chat -->
+    <string name="chat_you">You</string>
+    <string name="chat_peer">%s</string>
+    <string name="chat_no_messages">Start a conversation by tapping the microphone</string>
+    <string name="chat_replay">Replay audio</string>
+
+    <!-- Feedback messages -->
+    <string name="feedback_permission_denied">Microphone permission is required to use this app</string>
+    <string name="feedback_no_speech">No speech detected. Try again.</string>
+    <string name="feedback_translation_failed">Translation unavailable. Showing original text.</string>
+    <string name="feedback_connection_lost">Connection lost. Searching for devices…</string>
+    <string name="feedback_model_loading">Setting up speech recognition…</string>
+    <string name="feedback_translation_loading">Preparing translation (first time only)…</string>
+    <string name="feedback_tts_failed">Could not play audio. Check language packs in Settings.</string>
+    <string name="feedback_not_connected">Not connected — playing on this device</string>
+    <string name="feedback_sent">Sent</string>
+
+    <!-- Legacy (keep for any remaining references) -->
+    <string name="status_disconnected">Not connected</string>
+    <string name="status_searching">Searching…</string>
+    <string name="status_connected">Connected</string>
+    <string name="mode_send">Send</string>
+    <string name="mode_receive">Receive</string>
+    <string name="mode_both">Both</string>
+    <string name="mode_off">Off</string>
+    <string name="ptt_label">Tap\nto speak</string>
+    <string name="ptt_listening">Listening…</string>
+    <string name="log_placeholder" />
+</resources>

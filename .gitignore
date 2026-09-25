@@ -1,0 +1,45 @@
+# ==================== BUILD OUTPUTS ====================
+*.apk
+*.aab
+*.dex
+*.class
+*.jar
+build/
+.gradle/
+app/build/
+
+# ==================== IDE / LOCAL CONFIG ====================
+.idea/
+*.iml
+local.properties
+.DS_Store
+Thumbs.db
+
+# ==================== MODELS (TOO LARGE FOR GITHUB) ====================
+sherpa-models/
+vosk-models/
+*.onnx
+*.ort
+
+# ==================== SHERPA-ONNX AAR (50MB — too large) ====================
+app/libs/
+
+# ==================== LOGS & DEBUG ====================
+*.log
+scratch_logcat.txt
+crash.log
+
+# ==================== SCRIPTS & TEMP ====================
+push_models_to_phone.ps1
+setup_models.ps1
+
+# ==================== PHONE SCREENSHOTS / TEST DATA ====================
+phone1/
+phone2/
+
+# ==================== ESPEAK APK ====================
+espeak-*.apk
+
+# ==================== MISC ====================
+org/
+*.hprof

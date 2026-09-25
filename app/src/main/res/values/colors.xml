@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warm light background -->
+    <color name="background_warm">#FFFAFAF5</color>
+    <color name="surface_card">#FFFFFFFF</color>
+    <color name="surface_card_border">#FFE0E0E0</color>
+
+    <!-- Primary: Deep teal -->
+    <color name="teal_primary">#FF0D7377</color>
+    <color name="teal_dark">#FF095456</color>
+    <color name="teal_light">#FF4DB6AC</color>
+    <color name="teal_surface">#FFE0F2F1</color>
+
+    <!-- Accent: Soft amber (incoming) -->
+    <color name="amber_primary">#FFF5A623</color>
+    <color name="amber_dark">#FFE09100</color>
+    <color name="amber_surface">#FFFFF3E0</color>
+
+    <!-- Outgoing bubble -->
+    <color name="bubble_outgoing">#FFDEFAF8</color>
+    <color name="bubble_outgoing_text">#FF1A1A1A</color>
+
+    <!-- Incoming bubble -->
+    <color name="bubble_incoming">#FFFFF3E0</color>
+    <color name="bubble_incoming_text">#FF1A1A1A</color>
+
+    <!-- Text -->
+    <color name="text_dark">#FF1A1A1A</color>
+    <color name="text_medium">#FF555555</color>
+    <color name="text_light">#FF999999</color>
+    <color name="text_on_teal">#FFFFFFFF</color>
+
+    <!-- Status indicators -->
+    <color name="status_connected">#FF4CAF50</color>
+    <color name="status_searching">#FFFFC107</color>
+    <color name="status_disconnected">#FFBDBDBD</color>
+    <color name="status_error">#FFE53935</color>
+
+    <!-- Mic button -->
+    <color name="mic_idle">#FF0D7377</color>
+    <color name="mic_recording">#FFE53935</color>
+    <color name="mic_disabled">#FFBDBDBD</color>
+
+    <!-- Legacy aliases (keep for any remaining references) -->
+    <color name="background_dark">#FFFAFAF5</color>
+    <color name="surface_dark">#FFFFFFFF</color>
+    <color name="text_primary">#FF1A1A1A</color>
+    <color name="text_secondary">#FF555555</color>
+    <color name="accent_blue">#FF0D7377</color>
+    <color name="accent_green">#FF4CAF50</color>
+    <color name="status_red">#FFE53935</color>
+    <color name="status_green">#FF4CAF50</color>
+    <color name="status_yellow">#FFFFC107</color>
+    <color name="ptt_idle">#FF0D7377</color>
+    <color name="ptt_active">#FFE53935</color>
+</resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="start"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_bubble_incoming"
+        android:maxWidth="280dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Sender label -->
+            <TextView
+                android:id="@+id/tvSenderLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/amber_dark"
+                android:textStyle="bold" />
+
+            <!-- Message text -->
+            <TextView
+                android:id="@+id/tvMessageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/bubble_incoming_text"
+                android:layout_marginTop="2dp"
+                android:lineSpacingExtra="2dp" />
+
+            <!-- Translated text -->
+            <TextView
+                android:id="@+id/tvTranslationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/amber_dark"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Replay speaker button -->
+        <ImageButton
+            android:id="@+id/btnReplay"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_speaker"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/chat_replay"
+            android:scaleType="center"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Spacer to keep bubble left -->
+    <View
+        android:layout_width="60dp"
+        android:layout_height="0dp" />
+</LinearLayout>
