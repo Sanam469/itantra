@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutTacticalRadar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FA0B1B1E"
+    android:fitsSystemWindows="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <!-- Top App Bar: Title + Cross Dismiss Button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/radarLivePulseDot"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/bg_alert_button_active"
+                android:layout_marginEnd="10dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TACTICAL RESCUE RADAR"
+                    android:textColor="#FF00E5FF"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+                <TextView
+                    android:id="@+id/tvRadarPeerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Target: Wi-Fi Direct Peer"
+                    android:textColor="#A0FFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Cross / Close Button to return to main app -->
+        <ImageButton
+            android:id="@+id/btnDismissRadar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close radar and return to chat"
+            android:scaleType="center" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="24dp">
+
+            <!-- Radar Compass Dial View -->
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="260dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_radar_dial">
+
+                <!-- Compass Cardinal Points -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:text="N"
+                    android:textColor="#FF00E5FF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:text="S"
+                    android:textColor="#66FFFFFF"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="W"
+                    android:textColor="#66FFFFFF"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:text="E"
+                    android:textColor="#66FFFFFF"
+                    android:textSize="13sp" />
+
+                <!-- Inner Range Ring (10m) -->
+                <View
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_radar_dial"
+                    android:alpha="0.4" />
+
+                <!-- Dynamic Rotating Target Needle -->
+                <ImageView
+                    android:id="@+id/ivCompassNeedle"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_compass_needle"
+                    android:contentDescription="Target vector needle" />
+            </FrameLayout>
+
+            <!-- Bearing / Direction Angle -->
+            <TextView
+                android:id="@+id/tvTargetBearing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BEARING: 045° NE"
+                android:textColor="#FF00E5FF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:layout_marginTop="16dp" />
+
+            <!-- Large Live Distance Display -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/tvDistanceMeters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8.5"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="54sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="METERS"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="10dp" />
+            </LinearLayout>
+
+            <!-- Status Pill -->
+            <TextView
+                android:id="@+id/tvRadarStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TARGET IN CLOSE RANGE"
+                android:textColor="#FF00E5FF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:background="#2600E5FF"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:layout_marginTop="10dp" />
+
+            <!-- Signal Info Pill -->
+            <TextView
+                android:id="@+id/tvSignalStrength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RF Path-Loss Signal: -65 dBm"
+                android:textColor="#B0FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <!-- Controls Row: Sonar Mute & Remote Siren Trigger -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <!-- Toggle Sonar Ping Button -->
+                <Button
+                    android:id="@+id/btnToggleSonar"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="SONAR: ON"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#FF0D7377"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Trigger Remote Siren Button -->
+                <Button
+                    android:id="@+id/btnRemoteSiren"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1.2"
+                    android:text="REMOTE SIREN"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#FFE53935"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <!-- Walk Closer Demo Helper -->
+            <Button
+                android:id="@+id/btnDemoStepCloser"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Simulate Walking Closer (Judge Demo)"
+                android:textColor="#A0FFFFFF"
+                android:textSize="11sp"
+                app:backgroundTint="#26FFFFFF"
+                android:layout_marginTop="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

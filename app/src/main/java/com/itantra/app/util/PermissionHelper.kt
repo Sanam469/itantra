@@ -31,6 +31,7 @@ class PermissionHelper(private val activity: Activity) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 perms.add(Manifest.permission.NEARBY_WIFI_DEVICES)
+                perms.add(Manifest.permission.POST_NOTIFICATIONS)
             }
 
             return perms.toTypedArray()

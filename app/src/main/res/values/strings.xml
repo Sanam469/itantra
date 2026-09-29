@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">iTantra</string>
-    <string name="screen_title">Conversation</string>
+    <string name="screen_title">iTantra</string>
 
     <!-- Connection -->
     <string name="connection_idle">Not connected</string>

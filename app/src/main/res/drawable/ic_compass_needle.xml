@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- North Pointer (Bright Cyan / Teal) -->
+    <path
+        android:fillColor="#FF00E5FF"
+        android:pathData="M32,4 L40,32 L32,27 L24,32 Z" />
+    <!-- South Pointer (Subtle Translucent Silver) -->
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M32,60 L24,32 L32,27 L40,32 Z" />
+    <!-- Center Pivot Pin -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M29,32 A3,3 0 1 1 35,32 A3,3 0 1 1 29,32 Z" />
+</vector>

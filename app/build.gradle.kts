@@ -38,6 +38,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    packaging {
+        jniLibs {
+            pickFirsts.add("**/libonnxruntime.so")
+        }
+    }
 }
 
 dependencies {
@@ -55,6 +61,9 @@ dependencies {
     // Sherpa-ONNX - Offline CTC Speech Recognition & VAD (with bundled ONNX runtime)
     implementation(files("libs/sherpa-onnx-1.13.8.aar"))
 
+    // Microsoft ONNX Runtime Android Java API for IndicTrans2
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.17.1")
+
     // Compact Binary CBOR & JSON Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
@@ -68,9 +77,6 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // Google ML Kit On-Device Translation
-    implementation("com.google.mlkit:translate:17.0.3")
 
     // JSON serialization utility
     implementation("com.google.code.gson:gson:2.10.1")

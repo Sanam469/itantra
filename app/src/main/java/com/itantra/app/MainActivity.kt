@@ -1,11 +1,16 @@
 package com.itantra.app
 
 import android.app.AlertDialog
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -33,7 +38,7 @@ import com.itantra.app.transport.HybridWalkieTransport
 import com.itantra.app.transport.TransceiverTransport
 import com.itantra.app.transport.TransceiverTransportListener
 import android.media.AudioManager
-import com.itantra.app.translate.MlKitTranslationManager
+import com.itantra.app.translate.IndicTrans2TranslationManager
 import com.itantra.app.tts.OfflineTtsManager
 import com.itantra.app.ui.ChatAdapter
 import com.itantra.app.ui.ChatMessage
@@ -53,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_SPEAK_LANG = "speak_language"
         private const val KEY_LISTEN_LANG = "listen_language"
         private const val KEY_SPEAKING_MODE = "speaking_mode"
+        private const val NOTIF_CHANNEL_ID = "itantra_emergency"
+        private const val NOTIF_ID_EMERGENCY = 9001
     }
 
     // ===== UI =====
@@ -72,14 +79,33 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnAlert: ImageButton
     private lateinit var btnModeToggle: ImageButton
     private lateinit var btnManageConnection: ImageButton
+    private lateinit var btnLocate: ImageButton
     private lateinit var rowSpeak: View
     private lateinit var rowListen: View
+
+    // ===== Tactical Search & Rescue Radar (inflated on-demand) =====
+    private var radarOverlayContainer: FrameLayout? = null
+    private var layoutTacticalRadar: View? = null
+    private var btnDismissRadar: ImageButton? = null
+    private var ivCompassNeedle: ImageView? = null
+    private var tvTargetBearing: TextView? = null
+    private var tvDistanceMeters: TextView? = null
+    private var tvRadarStatus: TextView? = null
+    private var tvSignalStrength: TextView? = null
+    private var tvRadarPeerName: TextView? = null
+    private var btnToggleSonar: Button? = null
+    private var btnRemoteSiren: Button? = null
+    private var btnDemoStepCloser: Button? = null
+    private var isRadarInflated = false
+
+    private lateinit var radarManager: com.itantra.app.radar.RescueRadarManager
+    private var connectedPeerName: String? = null
 
     // ===== Core Components =====
     private lateinit var packManager: LanguagePackManager
     private lateinit var sttManager: SherpaSttManager
     private lateinit var ttsManager: OfflineTtsManager
-    private lateinit var translationManager: MlKitTranslationManager
+    private lateinit var translationManager: IndicTrans2TranslationManager
     private lateinit var transport: TransceiverTransport
     private lateinit var permissionHelper: PermissionHelper
     private lateinit var prefs: SharedPreferences
@@ -124,6 +150,7 @@ class MainActivity : AppCompatActivity() {
         updateLanguageDisplay()
         updateModeUI()
         updateMicState()
+        createEmergencyNotificationChannel()
 
         permissionHelper = PermissionHelper(this)
         if (permissionHelper.hasAllPermissions()) {
@@ -149,9 +176,61 @@ class MainActivity : AppCompatActivity() {
         btnAlert = findViewById(R.id.btnAlert)
         btnModeToggle = findViewById(R.id.btnModeToggle)
         btnManageConnection = findViewById(R.id.btnManageConnection)
+        btnLocate = findViewById(R.id.btnLocate)
         rowSpeak = findViewById(R.id.rowSpeak)
         rowListen = findViewById(R.id.rowListen)
         tvListenLanguage = findViewById(R.id.tvListenLanguage)
+        radarOverlayContainer = findViewById(R.id.radarOverlayContainer)
+    }
+
+    /**
+     * Inflates the tactical radar layout on-demand into the overlay container.
+     * This is NEVER called during startup — only when the user taps btnLocate.
+     */
+    private fun inflateRadarOverlay() {
+        if (isRadarInflated) return
+        val container = radarOverlayContainer ?: return
+        try {
+            val radarView = LayoutInflater.from(this).inflate(R.layout.layout_tactical_radar, container, false)
+            container.addView(radarView)
+            layoutTacticalRadar = radarView.findViewById(R.id.layoutTacticalRadar)
+            btnDismissRadar = radarView.findViewById(R.id.btnDismissRadar)
+            ivCompassNeedle = radarView.findViewById(R.id.ivCompassNeedle)
+            tvTargetBearing = radarView.findViewById(R.id.tvTargetBearing)
+            tvDistanceMeters = radarView.findViewById(R.id.tvDistanceMeters)
+            tvRadarStatus = radarView.findViewById(R.id.tvRadarStatus)
+            tvSignalStrength = radarView.findViewById(R.id.tvSignalStrength)
+            tvRadarPeerName = radarView.findViewById(R.id.tvRadarPeerName)
+            btnToggleSonar = radarView.findViewById(R.id.btnToggleSonar)
+            btnRemoteSiren = radarView.findViewById(R.id.btnRemoteSiren)
+            btnDemoStepCloser = radarView.findViewById(R.id.btnDemoStepCloser)
+
+            // Wire radar-specific click listeners
+            btnDismissRadar?.setOnClickListener {
+                radarManager.stopRadar()
+                hideRadarOverlay()
+            }
+            btnToggleSonar?.setOnClickListener {
+                val active = radarManager.toggleSonar()
+                btnToggleSonar?.text = if (active) "SONAR: ON" else "SONAR: OFF"
+                btnToggleSonar?.backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    if (active) getColor(R.color.teal_primary) else getColor(R.color.text_light)
+                )
+            }
+            btnRemoteSiren?.setOnClickListener {
+                sendSpeechPacket("RADAR_REMOTE_ALARM", 0L, isAlert = true)
+                showFeedback("⚡ REMOTE SIREN & STROBE TRIGGER SENT TO PEER!")
+            }
+            btnDemoStepCloser?.setOnClickListener {
+                radarManager.stepCloserForDemo()
+            }
+
+            isRadarInflated = true
+            Log.i(TAG, "Tactical radar overlay inflated successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to inflate radar overlay", e)
+            showFeedback("Radar UI failed to load")
+        }
     }
 
     private fun setupRecyclerView() {
@@ -172,7 +251,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupManagers() {
         packManager = LanguagePackManager(this)
-        translationManager = MlKitTranslationManager(this)
+        translationManager = IndicTrans2TranslationManager(this)
 
         sttManager = SherpaSttManager(this, packManager).apply {
             setSpeakingMode(currentMode)
@@ -185,6 +264,10 @@ class MainActivity : AppCompatActivity() {
 
         transport = HybridWalkieTransport(this).apply {
             setListener(transportListener)
+        }
+
+        radarManager = com.itantra.app.radar.RescueRadarManager(this).apply {
+            setListener(radarListener)
         }
     }
 
@@ -249,6 +332,36 @@ class MainActivity : AppCompatActivity() {
                 showFeedback("Connecting over Hotspot / Wi-Fi / Bluetooth...")
             }
         }
+
+        // Tactical Search & Rescue Radar: inflate on-demand, show overlay
+        btnLocate.setOnClickListener {
+            val state = transport.getState()
+            if (state == ConnectionState.CONNECTED) {
+                inflateRadarOverlay()
+                tvRadarPeerName?.text = "Target: ${connectedPeerName ?: "Wi-Fi Direct Peer"}"
+                radarOverlayContainer?.visibility = View.VISIBLE
+                layoutTacticalRadar?.visibility = View.VISIBLE
+                radarManager.startRadar(connectedPeerName ?: "Wi-Fi Direct Peer")
+                val myLoc = radarManager.getMyLocation()
+                val coords = if (myLoc != null) "${myLoc.latitude},${myLoc.longitude}" else "0.0,0.0"
+                sendSpeechPacket("RADAR_PING:$coords", 0L, isAlert = false)
+            } else {
+                showFeedback("Locate requires an active peer connection.")
+            }
+        }
+
+        // Modern back press handling: closes radar if visible, else normal back
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isRadarInflated && radarOverlayContainer?.visibility == View.VISIBLE) {
+                    radarManager.stopRadar()
+                    hideRadarOverlay()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
     private fun handlePttTouchEvent(event: MotionEvent): Boolean {
@@ -385,6 +498,27 @@ class MainActivity : AppCompatActivity() {
     // ==================== PACKET TRANSMISSION ====================
 
     private fun sendSpeechPacket(text: String, pauseDurationMs: Long, isAlert: Boolean) {
+        if (text.startsWith("RADAR_")) {
+            val messageId = UUID.randomUUID().toString().take(8)
+            val packet = SpeechPacket(
+                version = 1,
+                messageId = messageId,
+                sequence = 0,
+                language = "en",
+                text = text,
+                pauseDurationMs = 0L,
+                isAlert = isAlert,
+                isFinalSegment = true,
+                timestampMs = System.currentTimeMillis()
+            )
+            if (transport.getState() == ConnectionState.CONNECTED) {
+                transport.sendPacket(packet) { sendOk, bytes ->
+                    Log.d(TAG, "Radar packet sent=$sendOk, wireBytes=$bytes")
+                }
+            }
+            return
+        }
+
         val willBeAlert = isAlert || isEmergencyArmed
         if (isEmergencyArmed) {
             isEmergencyArmed = false
@@ -501,6 +635,34 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 Log.i(TAG, "Received SpeechPacket: \"${packet.text}\" (${rawByteCount} bytes, isAlert=${packet.isAlert})")
 
+                // Intercept Tactical Radar packets without polluting chat
+                if (packet.text.startsWith("RADAR_REMOTE_ALARM")) {
+                    try {
+                        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        val maxAlarm = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+                        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, maxAlarm, 0)
+                        radarManager.triggerCameraSosStrobe(cycles = 15)
+                        ttsManager.speakPacket(SpeechPacket(messageId = "radar_sos", language = "en", text = "EMERGENCY DISTRESS BEACON ACTIVATED", isAlert = true))
+                        showFeedback("🚨 REMOTE SEARCH & RESCUE LOCATING BEACON ACTIVATED!")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Error handling remote radar alarm", e)
+                    }
+                    return@runOnUiThread
+                } else if (packet.text.startsWith("RADAR_PING")) {
+                    val myLoc = radarManager.getMyLocation()
+                    val coords = if (myLoc != null) "${myLoc.latitude},${myLoc.longitude}" else "0.0,0.0"
+                    sendSpeechPacket("RADAR_PONG:$coords", 0L, isAlert = false)
+                    return@runOnUiThread
+                } else if (packet.text.startsWith("RADAR_PONG:")) {
+                    val parts = packet.text.substringAfter("RADAR_PONG:").split(",")
+                    if (parts.size == 2) {
+                        val lat = parts[0].toDoubleOrNull() ?: 0.0
+                        val lon = parts[1].toDoubleOrNull() ?: 0.0
+                        radarManager.updatePeerCoordinates(lat, lon)
+                    }
+                    return@runOnUiThread
+                }
+
                 if (packet.isAlert) {
                     try {
                         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -512,6 +674,8 @@ class MainActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         Log.w(TAG, "Error maximizing volume for alert", e)
                     }
+                    // Show heads-up notification so user gets alerted even if app is in background/screen off
+                    showEmergencyNotification(packet.text)
                 }
 
                 val needsTranslation = !packet.language.equals(listenLanguage, ignoreCase = true)
@@ -585,6 +749,75 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    /**
+     * Creates the emergency notification channel once (required Android 8+).
+     * High importance = heads-up / sound even when app is in background.
+     */
+    private fun createEmergencyNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (nm.getNotificationChannel(NOTIF_CHANNEL_ID) == null) {
+                val channel = NotificationChannel(
+                    NOTIF_CHANNEL_ID,
+                    "Emergency Distress Alerts",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "iTantra peer emergency alerts via Wi-Fi Direct / Hotspot"
+                    enableVibration(true)
+                    vibrationPattern = longArrayOf(0, 300, 100, 300, 100, 300)
+                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                }
+                nm.createNotificationChannel(channel)
+                Log.i(TAG, "Emergency notification channel created")
+            }
+        }
+    }
+
+    /**
+     * Shows a high-priority heads-up notification with the emergency message.
+     * Works when app is in background, screen off, or closed (as long as the
+     * transport socket stays alive via Wi-Fi hotspot connection).
+     */
+    private fun showEmergencyNotification(messageText: String) {
+        try {
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            // Tapping notification brings app to foreground
+            val tapIntent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+            val pendingIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingFlags)
+
+            val notifBuilder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Notification.Builder(this, NOTIF_CHANNEL_ID)
+            } else {
+                @Suppress("DEPRECATION")
+                Notification.Builder(this)
+            }
+
+            val truncatedMsg = if (messageText.length > 120) messageText.take(120) + "…" else messageText
+            val notif = notifBuilder
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setContentTitle("🚨 iTantra EMERGENCY ALERT")
+                .setContentText(truncatedMsg)
+                .setStyle(Notification.BigTextStyle().bigText(truncatedMsg))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(false)
+                .build()
+
+            nm.notify(NOTIF_ID_EMERGENCY, notif)
+            Log.i(TAG, "Emergency notification posted: $truncatedMsg")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to show emergency notification", e)
+        }
     }
 
     // ==================== LANGUAGE SELECTION & PROVISIONING ====================
@@ -945,28 +1178,83 @@ class MainActivity : AppCompatActivity() {
             ConnectionState.IDLE -> {
                 tvConnectionStatus.text = getString(R.string.connection_idle)
                 connectionDot.setBackgroundColor(getColor(R.color.status_disconnected))
+                btnLocate.visibility = View.GONE
+                btnLocate.isEnabled = false
+                dismissRadarIfVisible()
             }
             ConnectionState.DISCOVERING -> {
                 tvConnectionStatus.text = getString(R.string.connection_searching)
                 connectionDot.setBackgroundColor(getColor(R.color.status_searching))
+                btnLocate.visibility = View.GONE
+                btnLocate.isEnabled = false
             }
             ConnectionState.CONNECTING -> {
                 tvConnectionStatus.text = "Connecting to peer..."
                 connectionDot.setBackgroundColor(getColor(R.color.status_searching))
+                btnLocate.visibility = View.GONE
+                btnLocate.isEnabled = false
             }
             ConnectionState.CONNECTED -> {
-                tvConnectionStatus.text = getString(R.string.connection_connected, peerInfo ?: "Wi-Fi Direct Peer")
+                val peerName = peerInfo ?: "Wi-Fi Direct Peer"
+                connectedPeerName = peerName
+                tvConnectionStatus.text = getString(R.string.connection_connected, peerName)
                 connectionDot.setBackgroundColor(getColor(R.color.status_connected))
+                btnLocate.visibility = View.VISIBLE
+                btnLocate.isEnabled = true
+                tvRadarPeerName?.text = "Target: $peerName"
             }
             ConnectionState.DISCONNECTED -> {
                 tvConnectionStatus.text = getString(R.string.connection_disconnected)
                 connectionDot.setBackgroundColor(getColor(R.color.status_error))
+                btnLocate.visibility = View.GONE
+                btnLocate.isEnabled = false
+                dismissRadarIfVisible()
             }
             ConnectionState.ERROR -> {
                 tvConnectionStatus.text = "Connection Error"
                 connectionDot.setBackgroundColor(getColor(R.color.status_error))
+                btnLocate.visibility = View.GONE
+                btnLocate.isEnabled = false
+                dismissRadarIfVisible()
             }
         }
+    }
+
+    private fun hideRadarOverlay() {
+        layoutTacticalRadar?.visibility = View.GONE
+        radarOverlayContainer?.visibility = View.GONE
+    }
+
+    private fun dismissRadarIfVisible() {
+        if (isRadarInflated && radarOverlayContainer?.visibility == View.VISIBLE) {
+            radarManager.stopRadar()
+            hideRadarOverlay()
+        }
+    }
+
+    private val radarListener = object : com.itantra.app.radar.RescueRadarManager.RadarUpdateListener {
+        override fun onRadarUpdate(
+            distanceMeters: Float,
+            bearingDegrees: Float,
+            needleRotationDegrees: Float,
+            signalDbm: Int,
+            isGpsActive: Boolean,
+            statusText: String
+        ) {
+            ivCompassNeedle?.rotation = needleRotationDegrees
+            tvDistanceMeters?.text = String.format(java.util.Locale.US, "%.1f", distanceMeters)
+            val compassDir = getCompassDirection(bearingDegrees)
+            tvTargetBearing?.text = String.format(java.util.Locale.US, "BEARING: %03d\u00b0 %s", bearingDegrees.toInt(), compassDir)
+            tvRadarStatus?.text = statusText
+            val modeLabel = if (isGpsActive) "NavIC/GPS Satellite Vector" else "RF Path-Loss Signal"
+            tvSignalStrength?.text = "$modeLabel: $signalDbm dBm"
+        }
+    }
+
+    private fun getCompassDirection(deg: Float): String {
+        val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+        val index = (((deg + 22.5f) % 360f) / 45f).toInt().coerceIn(0, 7)
+        return directions[index]
     }
 
     private fun addChatMessage(message: ChatMessage) {
@@ -996,6 +1284,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        radarManager.stopRadar()
         sttManager.release()
         ttsManager.release()
         transport.disconnect()

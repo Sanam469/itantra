@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_warm"
     android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/background_warm">
 
     <!-- ===== HEADER ===== -->
     <LinearLayout
@@ -85,12 +90,23 @@
 
         <ImageButton
             android:id="@+id/btnManageConnection"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:src="@drawable/ic_link"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/connection_manage"
             android:scaleType="center" />
+
+        <ImageButton
+            android:id="@+id/btnLocate"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_radar"
+            android:background="@drawable/bg_locate_button"
+            android:contentDescription="Locate Peer Rescue Beacon"
+            android:scaleType="center"
+            android:visibility="gone" />
     </LinearLayout>
 
     <!-- ===== LANGUAGE PREFERENCES CARD ===== -->
@@ -415,5 +431,13 @@
             android:textColor="@color/text_light"
             android:layout_marginTop="12dp" />
     </LinearLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <!-- Radar overlay container: inflated on-demand when btnLocate is tapped -->
+    <FrameLayout
+        android:id="@+id/radarOverlayContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</FrameLayout>
